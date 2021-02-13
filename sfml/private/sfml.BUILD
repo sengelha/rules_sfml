@@ -107,6 +107,8 @@ cc_library(
         ":sfml_config",
         ":sfml_system",
         ":sfml_window",
+        "@stb",
+        "@freetype2",
     ],
 )
 
