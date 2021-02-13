@@ -1,58 +1,24 @@
 cc_library(
     name = "sfml_config",
+    hdrs = [
+        "include/SFML/Config.hpp",
+    ],
+    defines = [
+        "SFML_STATIC",
+    ],
+    include_prefix = "SFML",
     local_defines = select({
+        "@platforms//os:linux": [],
         "@platforms//os:windows": [
             "UNICODE",
             "_UNICODE",
         ],
     }),
-    defines = [
-        "SFML_STATIC",
-    ],
-    hdrs = [
-        "include/SFML/Config.hpp",
-    ],
-    include_prefix = "SFML",
     strip_include_prefix = "include/SFML",
 )
 
 cc_library(
     name = "sfml_graphics",
-    hdrs = [
-        "include/SFML/Graphics.hpp",
-        "include/SFML/Graphics/BlendMode.hpp",
-        "include/SFML/Graphics/CircleShape.hpp",
-        "include/SFML/Graphics/Color.hpp",
-        "include/SFML/Graphics/ConvexShape.hpp",
-        "include/SFML/Graphics/Drawable.hpp",
-        "include/SFML/Graphics/Export.hpp",
-        "include/SFML/Graphics/Font.hpp",
-        "include/SFML/Graphics/Glsl.hpp",
-        "include/SFML/Graphics/Glsl.inl",
-        "include/SFML/Graphics/Glyph.hpp",
-        "include/SFML/Graphics/Image.hpp",
-        "include/SFML/Graphics/PrimitiveType.hpp",
-        "include/SFML/Graphics/Rect.hpp",
-        "include/SFML/Graphics/Rect.inl",
-        "include/SFML/Graphics/RectangleShape.hpp",
-        "include/SFML/Graphics/RenderStates.hpp",
-        "include/SFML/Graphics/RenderTarget.hpp",
-        "include/SFML/Graphics/RenderTexture.hpp",
-        "include/SFML/Graphics/RenderWindow.hpp",
-        "include/SFML/Graphics/Shader.hpp",
-        "include/SFML/Graphics/Shape.hpp",
-        "include/SFML/Graphics/Sprite.hpp",
-        "include/SFML/Graphics/Text.hpp",
-        "include/SFML/Graphics/Texture.hpp",
-        "include/SFML/Graphics/Transform.hpp",
-        "include/SFML/Graphics/Transformable.hpp",
-        "include/SFML/Graphics/Vertex.hpp",
-        "include/SFML/Graphics/VertexArray.hpp",
-        "include/SFML/Graphics/VertexBuffer.hpp",
-        "include/SFML/Graphics/View.hpp",
-    ],
-    include_prefix = "SFML",
-    strip_include_prefix = "include/SFML",
     srcs = [
         "src/SFML/Graphics/BlendMode.cpp",
         "src/SFML/Graphics/CircleShape.cpp",
@@ -94,11 +60,49 @@ cc_library(
         "src/SFML/Graphics/VertexBuffer.cpp",
         "src/SFML/Graphics/View.cpp",
     ],
+    hdrs = [
+        "include/SFML/Graphics.hpp",
+        "include/SFML/Graphics/BlendMode.hpp",
+        "include/SFML/Graphics/CircleShape.hpp",
+        "include/SFML/Graphics/Color.hpp",
+        "include/SFML/Graphics/ConvexShape.hpp",
+        "include/SFML/Graphics/Drawable.hpp",
+        "include/SFML/Graphics/Export.hpp",
+        "include/SFML/Graphics/Font.hpp",
+        "include/SFML/Graphics/Glsl.hpp",
+        "include/SFML/Graphics/Glsl.inl",
+        "include/SFML/Graphics/Glyph.hpp",
+        "include/SFML/Graphics/Image.hpp",
+        "include/SFML/Graphics/PrimitiveType.hpp",
+        "include/SFML/Graphics/Rect.hpp",
+        "include/SFML/Graphics/Rect.inl",
+        "include/SFML/Graphics/RectangleShape.hpp",
+        "include/SFML/Graphics/RenderStates.hpp",
+        "include/SFML/Graphics/RenderTarget.hpp",
+        "include/SFML/Graphics/RenderTexture.hpp",
+        "include/SFML/Graphics/RenderWindow.hpp",
+        "include/SFML/Graphics/Shader.hpp",
+        "include/SFML/Graphics/Shape.hpp",
+        "include/SFML/Graphics/Sprite.hpp",
+        "include/SFML/Graphics/Text.hpp",
+        "include/SFML/Graphics/Texture.hpp",
+        "include/SFML/Graphics/Transform.hpp",
+        "include/SFML/Graphics/Transformable.hpp",
+        "include/SFML/Graphics/Vertex.hpp",
+        "include/SFML/Graphics/VertexArray.hpp",
+        "include/SFML/Graphics/VertexBuffer.hpp",
+        "include/SFML/Graphics/View.hpp",
+    ],
     copts = select({
+        "@platforms//os:linux": [
+            "-Iexternal/sfml/src",
+        ],
         "@platforms//os:windows": [
             "/Iexternal/sfml/src",
         ],
     }),
+    include_prefix = "SFML",
+    strip_include_prefix = "include/SFML",
     deps = [
         ":sfml_config",
         ":sfml_system",
@@ -108,15 +112,39 @@ cc_library(
 
 cc_library(
     name = "sfml_system",
-    local_defines = select({
+    srcs = [
+        "src/SFML/System/Clock.cpp",
+        "src/SFML/System/Err.cpp",
+        "src/SFML/System/FileInputStream.cpp",
+        "src/SFML/System/Lock.cpp",
+        "src/SFML/System/MemoryInputStream.cpp",
+        "src/SFML/System/Mutex.cpp",
+        "src/SFML/System/Sleep.cpp",
+        "src/SFML/System/String.cpp",
+        "src/SFML/System/Thread.cpp",
+        "src/SFML/System/ThreadLocal.cpp",
+        "src/SFML/System/Time.cpp",
+    ] + select({
+        "@platforms//os:linux": [
+            "src/SFML/System/Unix/ClockImpl.hpp",
+            "src/SFML/System/Unix/MutexImpl.hpp",
+            "src/SFML/System/Unix/SleepImpl.hpp",
+            "src/SFML/System/Unix/ThreadImpl.hpp",
+            "src/SFML/System/Unix/ThreadLocalImpl.hpp",
+        ],
         "@platforms//os:windows": [
-            "UNICODE",
-            "_UNICODE",
+            "src/SFML/System/Win32/ClockImpl.cpp",
+            "src/SFML/System/Win32/ClockImpl.hpp",
+            "src/SFML/System/Win32/MutexImpl.cpp",
+            "src/SFML/System/Win32/MutexImpl.hpp",
+            "src/SFML/System/Win32/SleepImpl.cpp",
+            "src/SFML/System/Win32/SleepImpl.hpp",
+            "src/SFML/System/Win32/ThreadImpl.cpp",
+            "src/SFML/System/Win32/ThreadImpl.hpp",
+            "src/SFML/System/Win32/ThreadLocalImpl.cpp",
+            "src/SFML/System/Win32/ThreadLocalImpl.hpp",
         ],
     }),
-    defines = [
-        "SFML_STATIC",
-    ],
     hdrs = [
         "include/SFML/System.hpp",
         "include/SFML/System/Clock.hpp",
@@ -144,83 +172,40 @@ cc_library(
         "include/SFML/System/Vector3.hpp",
         "include/SFML/System/Vector3.inl",
     ],
-    include_prefix = "SFML",
-    strip_include_prefix = "include/SFML",
-    srcs = [
-        "src/SFML/System/Clock.cpp",
-        "src/SFML/System/Err.cpp",
-        "src/SFML/System/FileInputStream.cpp",
-        "src/SFML/System/Lock.cpp",
-        "src/SFML/System/MemoryInputStream.cpp",
-        "src/SFML/System/Mutex.cpp",
-        "src/SFML/System/Sleep.cpp",
-        "src/SFML/System/String.cpp",
-        "src/SFML/System/Thread.cpp",
-        "src/SFML/System/ThreadLocal.cpp",
-        "src/SFML/System/Time.cpp",
-    ] + select({
-        "@platforms//os:windows": [
-            "src/SFML/System/Win32/ClockImpl.cpp",
-            "src/SFML/System/Win32/ClockImpl.hpp",
-            "src/SFML/System/Win32/MutexImpl.cpp",
-            "src/SFML/System/Win32/MutexImpl.hpp",
-            "src/SFML/System/Win32/SleepImpl.cpp",
-            "src/SFML/System/Win32/SleepImpl.hpp",
-            "src/SFML/System/Win32/ThreadImpl.cpp",
-            "src/SFML/System/Win32/ThreadImpl.hpp",
-            "src/SFML/System/Win32/ThreadLocalImpl.cpp",
-            "src/SFML/System/Win32/ThreadLocalImpl.hpp",
-        ],
-    }),
     copts = select({
+        "@platforms//os:linux": [
+            "-Iexternal/sfml/src",
+        ],
         "@platforms//os:windows": [
             "/Iexternal/sfml/src",
-        ],
-    }),
-    linkopts = select({
-        "@platforms//os:windows": [
-            "winmm.lib",
-        ],
-    }),
-    deps = [
-        ":sfml_config",
-    ],
-    linkstatic = True,
-)
-
-cc_library(
-    name = "sfml_window",
-    local_defines = select({
-        "@platforms//os:windows": [
-            "UNICODE",
-            "_UNICODE",
         ],
     }),
     defines = [
         "SFML_STATIC",
     ],
-    hdrs = [
-        "include/SFML/OpenGL.hpp",
-        "include/SFML/Window.hpp",
-        "include/SFML/Window/Clipboard.hpp",
-        "include/SFML/Window/Context.hpp",
-        "include/SFML/Window/ContextSettings.hpp",
-        "include/SFML/Window/Cursor.hpp",
-        "include/SFML/Window/Event.hpp",
-        "include/SFML/Window/Export.hpp",
-        "include/SFML/Window/GlResource.hpp",
-        "include/SFML/Window/Joystick.hpp",
-        "include/SFML/Window/Keyboard.hpp",
-        "include/SFML/Window/Mouse.hpp",
-        "include/SFML/Window/Sensor.hpp",
-        "include/SFML/Window/Touch.hpp",
-        "include/SFML/Window/VideoMode.hpp",
-        "include/SFML/Window/Window.hpp",
-        "include/SFML/Window/WindowHandle.hpp",
-        "include/SFML/Window/WindowStyle.hpp",
-    ],
     include_prefix = "SFML",
+    linkopts = select({
+        "@platforms//os:linux": [],
+        "@platforms//os:windows": [
+            "winmm.lib",
+        ],
+    }),
+    linkstatic = True,
+    local_defines = select({
+        "@platforms//os:linux": [],
+        "@platforms//os:windows": [
+            "UNICODE",
+            "_UNICODE",
+        ],
+    }),
     strip_include_prefix = "include/SFML",
+    deps = [
+        ":sfml_config",
+    ],
+)
+
+cc_library(
+    name = "sfml_window",
     srcs = [
         "src/SFML/Window/Clipboard.cpp",
         "src/SFML/Window/ClipboardImpl.hpp",
@@ -248,6 +233,13 @@ cc_library(
         "src/SFML/Window/WindowImpl.cpp",
         "src/SFML/Window/WindowImpl.hpp",
     ] + select({
+        "@platforms//os:linux": [
+            "src/SFML/Window/Unix/CursorImpl.hpp",
+            "src/SFML/Window/Unix/InputImpl.hpp",
+            "src/SFML/Window/Unix/JoystickImpl.hpp",
+            "src/SFML/Window/Unix/GlxContext.hpp",
+            "src/SFML/Window/Unix/SensorImpl.hpp",
+        ],
         "@platforms//os:windows": [
             "src/SFML/Window/Win32/ClipboardImpl.cpp",
             "src/SFML/Window/Win32/ClipboardImpl.hpp",
@@ -268,12 +260,40 @@ cc_library(
             "src/SFML/Window/Win32/WindowImplWin32.hpp",
         ],
     }),
+    hdrs = [
+        "include/SFML/OpenGL.hpp",
+        "include/SFML/Window.hpp",
+        "include/SFML/Window/Clipboard.hpp",
+        "include/SFML/Window/Context.hpp",
+        "include/SFML/Window/ContextSettings.hpp",
+        "include/SFML/Window/Cursor.hpp",
+        "include/SFML/Window/Event.hpp",
+        "include/SFML/Window/Export.hpp",
+        "include/SFML/Window/GlResource.hpp",
+        "include/SFML/Window/Joystick.hpp",
+        "include/SFML/Window/Keyboard.hpp",
+        "include/SFML/Window/Mouse.hpp",
+        "include/SFML/Window/Sensor.hpp",
+        "include/SFML/Window/Touch.hpp",
+        "include/SFML/Window/VideoMode.hpp",
+        "include/SFML/Window/Window.hpp",
+        "include/SFML/Window/WindowHandle.hpp",
+        "include/SFML/Window/WindowStyle.hpp",
+    ],
     copts = select({
+        "@platforms//os:linux": [
+            "-Iexternal/sfml/src",
+        ],
         "@platforms//os:windows": [
             "/Iexternal/sfml/src",
         ],
     }),
+    defines = [
+        "SFML_STATIC",
+    ],
+    include_prefix = "SFML",
     linkopts = select({
+        "@platforms//os:linux": [],
         "@platforms//os:windows": [
             "advapi32.lib",
             "gdi32.lib",
@@ -281,19 +301,27 @@ cc_library(
             "user32.lib",
         ],
     }),
+    linkstatic = True,
+    local_defines = select({
+        "@platforms//os:linux": [],
+        "@platforms//os:windows": [
+            "UNICODE",
+            "_UNICODE",
+        ],
+    }),
+    strip_include_prefix = "include/SFML",
     deps = [
         ":sfml_config",
         ":sfml_system",
     ],
-    linkstatic = True,
 )
 
 cc_library(
     name = "sfml",
+    visibility = ["//visibility:public"],
     deps = [
         ":sfml_graphics",
         ":sfml_system",
         ":sfml_window",
     ],
-    visibility = ["//visibility:public"],
 )
